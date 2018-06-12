@@ -1,0 +1,23 @@
+{
+  "name": "tinyapp",
+  "version": "1.0.0",
+  "main": "express_server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiffanydow1/tinyApp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tiffanydow1/tinyApp/issues"
+  },
+  "homepage": "https://github.com/tiffanydow1/tinyApp#readme",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.3"
+  },
+  "description": ""
+}

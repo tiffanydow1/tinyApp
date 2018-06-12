@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>TinyApp</title>
+<% include ./partials/_header.ejs %>
 </head>
 <body>
-    <!--Add EJS Code here -->
+    <ul>
+      <% for (let shortUrl in urls)  { %>
+        <li>Short URL's</li>
+        <li><%= shortUrl %></li>
+        <li>Long URL's</li>
+        <li><%= urls[shortUrl] %></li>
+     <% } %>
+      <a href="#">Shorten your URL!</a>
+
+    </ul>
 </body>
 </html>
+
