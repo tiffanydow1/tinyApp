@@ -33,26 +33,26 @@ app.get("/urls", (req, res) => {
       username: req.cookies["username"]
    };
   res.status(200).render("urls_index", templateVars);
-  res.status(200).render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  res.status(200).render("urls_new");
+  let templateVars = { username: req.cookies["username"] };
+  res.status(200).render("urls_new", templateVars);
 });
 
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   let {longURL} = req.body;
   urlDatabase[shortURL] = longURL;
-
-  // res.cookie('username', req.body)
-  // res.send;
-  // res.redirect(301, "/urls");
+  res.redirect(301, "/urls");
 });
 
 app.get("/u/:shortURL", (req, res) => {
+  let shortUrl = req.params.id;
   const longURL = urlDatabase[req.params.shortURL];
-
+  let templateVars = {
+    username: req.cookies["username"]
+  }
   if(longURL === undefined) {
     res.status(404).send('Not Found');
   } else {
@@ -69,7 +69,6 @@ app.get("/urls/:id", (req, res) => {
     username: req.cookies["username"]
    }
   res.status(200).render("urls_show", templateVars);
-  res.status(200).render("urls_show", templateVars);
 })
 
 app.post("/urls/:id/delete", (req, res) => {
@@ -82,6 +81,8 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post("/urls/:id", (req, res) => {
   let {id:shortUrl} = req.params;
   let {longUrl} = req.body;
+  let templateVars = { username: req.cookies["username"] }
+  console.log(req.cookies["username"]);
   urlDatabase[shortUrl] = longUrl;
   res.redirect(301, "/urls");
 });
@@ -92,6 +93,16 @@ app.post("/login", (req, res) => {
   res.cookie("username", username);
   res.redirect(301, "/urls");
 });
+
+//logout
+app.post("/logout", (req, res) => {
+  let {username} = req.body;
+  let templateVars = {
+    username: req.cookies["username"]
+  }
+  res.clearCookie("username", username);
+  res.redirect(301, "/urls");
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
