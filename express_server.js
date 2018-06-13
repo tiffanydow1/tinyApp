@@ -4,7 +4,7 @@ var PORT = 8080;
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static("public"));
+app.use(express.static("./views/css"));
 
 app.set("view engine", "ejs");
 
@@ -28,18 +28,18 @@ function generateRandomString() {
 
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
-  res.render("urls_index", templateVars);
+  res.status(200).render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  res.status(200).render("urls_new");
 });
 
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
-  let longURL = req.body.longURL;
+  let {longURL} = req.body;
   urlDatabase[shortURL] = longURL;
-  res.redirect("/urls");
+  res.redirect(301, "/urls");
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -54,12 +54,12 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  let shortUrl = req.params.id;
+  let {id:shortUrl} = req.params;
   let longUrl = urlDatabase[shortUrl];
   let templateVars = { shortUrl: shortUrl,
     longUrl: longUrl
    }
-  res.render("urls_show", templateVars);
+  res.status(200).render("urls_show", templateVars);
 })
 
 app.post("/urls/:id/delete", (req, res) => {
@@ -68,6 +68,14 @@ app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[shortUrl];
   res.redirect(301, "/urls");
 })
+
+app.post("/urls/:id", (req, res) => {
+  let {id:shortUrl} = req.params;
+  let {longUrl} = req.body;
+  urlDatabase[shortUrl] = longUrl;
+  res.redirect(301, "/urls");
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });

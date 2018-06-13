@@ -21,12 +21,14 @@
      <td><form method="POST" action="/urls/<%= shortUrl %>/delete">
         <input type="submit" value="Delete">
      </form>
+     <form method="GET" action="/urls/<%= shortUrl %>">
+        <input type="submit" value="Update">
+     </form>
      </td>
    </tr>
  <% } %>
  </tbody>
 </table>
-<a href="#">Shorten your URL!</a>
 </body>
 </html>
 </body>

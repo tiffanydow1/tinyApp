@@ -7,8 +7,15 @@
     <ul>
       <li><%= shortUrl %></li>
       <li><%= longUrl %></li>
+
+      <li><form method="POST" action="/urls/<%=shortUrl%>">
+          <input type="submit" value="Update">
+          <input type="text" name="longUrl" placeholder="<%= longUrl %>" style="width: 300px">
+          </form></li>
       <a href="#">Shorten your URL!</a>
 
     </ul>
 </body>
 </html>
+
+
