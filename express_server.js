@@ -2,6 +2,9 @@ var express = require("express");
 var app = express();
 var PORT = 8080;
 
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+
 app.set("view engine", "ejs");
 
 var urlDatabase = { //object keeps track of URLs & shortened form (as values and keys).
@@ -9,9 +12,31 @@ var urlDatabase = { //object keeps track of URLs & shortened form (as values and
   "9sm5xK": "http://www.google.com"
 };
 
+//function generates a unique shortURL - produces 6 random alphanumeric characters
+function generateRandomString() {
+
+  let randomString = "";
+  const options = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (let i = 0; i < 6; i++) {
+
+    randomString += options.charAt(Math.random()* options.length);
+  }
+  return randomString;
+}
+
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
+});
+
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
+app.post("/urls", (req, res) => {
+  console.log(req.body) //debug statement to see POST parameters
+  res.send("Ok"); //Respon with 'Ok' (we will replace this)
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -26,4 +51,27 @@ app.get("/urls/:id", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-//add new route handler for "urls" & use res.render() to pass URL data to template
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
