@@ -9,14 +9,14 @@ app.set("view engine", "ejs");
 
 var urlDatabase = { //object keeps track of URLs & shortened form (as values and keys).
   "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "9sm5xK": "http://www.google.com",
 };
 
 //function generates a unique shortURL - produces 6 random alphanumeric characters
 function generateRandomString() {
 
   let randomString = "";
-  const options = "abcdefghijklmnopqrstuvwxyz0123456789";
+  const options = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
   for (let i = 0; i < 6; i++) {
 
@@ -35,8 +35,15 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body) //debug statement to see POST parameters
-  res.send("Ok"); //Respon with 'Ok' (we will replace this)
+  let shortURL = generateRandomString();
+  let longURL = req.body.longURL;
+  urlDatabase[shortURL] = longURL;
+  res.redirect("/urls"); //Respond with 'Ok' (we will replace this)
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  let longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -51,8 +58,6 @@ app.get("/urls/:id", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-
 
 
 
