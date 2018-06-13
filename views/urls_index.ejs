@@ -4,15 +4,25 @@
 <% include ./partials/_header.ejs %>
 </head>
 <body>
-  <ul>
-    <% for (let shortUrl in urls)  { %>
-       <li>Short URL's</li>
-       <li><%= shortUrl %></li>
-       <li>Long URL's</li>
-       <li><%= urls[shortUrl] %></li>
-   <% } %>
-      <a href="#">Shorten your URL!</a>
-  </ul>
+  <table>
+  <thead>
+   <tr>
+     <th>Short URL</th>
+     <th>Long URL</th>
+   </tr>
+ </thead>
+ <tbody>
+   <% for ( let shortUrl in urls ) { %>
+   <tr>
+     <td><%= shortUrl %></td>
+     <td><%= urls[shortUrl] %></td>
+   </tr>
+ <% } %>
+ </tbody>
+</table>
+<a href="#">Shorten your URL!</a>
+</body>
+</html>
 </body>
 </html>
 

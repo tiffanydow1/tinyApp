@@ -7,7 +7,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.set("view engine", "ejs");
 
-var urlDatabase = { //object keeps track of URLs & shortened form (as values and keys).
+const urlDatabase = { //object keeps track of URLs & shortened form (as values and keys).
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
 };
@@ -42,8 +42,14 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
-  res.redirect(longURL);
+  const longURL = urlDatabase[req.params.shortURL];
+
+  if(longURL === undefined) {
+    res.status(404).send('Not Found');
+  } else {
+    res.redirect(301, longURL);
+  }
+  //return next();
 });
 
 app.get("/urls/:id", (req, res) => {
