@@ -4,6 +4,7 @@ var PORT = 8080;
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static("public"));
 
 app.set("view engine", "ejs");
 
@@ -38,7 +39,7 @@ app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   let longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL;
-  res.redirect("/urls"); //Respond with 'Ok' (we will replace this)
+  res.redirect("/urls");
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -61,6 +62,12 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 })
 
+app.post("/urls/:id/delete", (req, res) => {
+  let shortUrl = req.params.id;
+
+  delete urlDatabase[shortUrl];
+  res.redirect(301, "/urls");
+})
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });

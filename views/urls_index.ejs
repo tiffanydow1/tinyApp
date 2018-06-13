@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
 <% include ./partials/_header.ejs %>
+<link rel="stylesheet" href="/static/css/styles.css" type="text/css">
 </head>
 <body>
-  <table>
+  <table class = "table">
   <thead>
    <tr>
      <th>Short URL</th>
      <th>Long URL</th>
+     <th>Actions</th>
    </tr>
  </thead>
  <tbody>
@@ -16,6 +18,10 @@
    <tr>
      <td><%= shortUrl %></td>
      <td><%= urls[shortUrl] %></td>
+     <td><form method="POST" action="/urls/<%= shortUrl %>/delete">
+        <input type="submit" value="Delete">
+     </form>
+     </td>
    </tr>
  <% } %>
  </tbody>
@@ -25,6 +31,8 @@
 </html>
 </body>
 </html>
+
+
 
 
 

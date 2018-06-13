@@ -1,0 +1,17 @@
+.table {
+  display: inline-block;
+  vertical-align: top;
+  max-width: 100%;
+
+  white-space: nowrap;
+}
+.table th {
+  font-size: 12px;
+  text-align: center;
+  text-transform: uppercase;
+}
+.table th,
+.table td {
+  padding: 6px 12px;
+  border: 1px solid black;
+}
