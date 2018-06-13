@@ -1,10 +1,12 @@
 var express = require("express");
 var app = express();
 var PORT = 8080;
+const cookieParser = require('cookie-parser'); //in order to read cookie sent from client
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("./views/css"));
+app.use(cookieParser());
 
 app.set("view engine", "ejs");
 
@@ -29,6 +31,7 @@ function generateRandomString() {
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.status(200).render("urls_index", templateVars);
+
 });
 
 app.get("/urls/new", (req, res) => {
@@ -39,7 +42,10 @@ app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   let {longURL} = req.body;
   urlDatabase[shortURL] = longURL;
-  res.redirect(301, "/urls");
+
+  // res.cookie('username', req.body)
+  // res.send;
+  // res.redirect(301, "/urls");
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -75,6 +81,13 @@ app.post("/urls/:id", (req, res) => {
   urlDatabase[shortUrl] = longUrl;
   res.redirect(301, "/urls");
 });
+
+//Save cookies & show username//
+app.post("/login", (req, res) => {
+  let username = req.body.username;
+  res.cookie("username", username);
+  res.redirect(301, "/urls");
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
