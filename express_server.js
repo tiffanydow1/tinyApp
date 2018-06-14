@@ -15,6 +15,19 @@ const urlDatabase = { //object keeps track of URLs & shortened form (as values a
   "9sm5xK": "http://www.google.com",
 };
 
+const usersDatabase = {
+  "userID-1": {
+    id: "tiffanyd",
+    email: "tiffanyjdow@gmail.com",
+    password: "yoloswag"
+  },
+  "userID-2": {
+    id: "camueljackson",
+    email: "camueljackson@gmail.com",
+    password: "beyoncejay"
+  }
+}
+
 //function generates a unique shortURL - produces 6 random alphanumeric characters
 function generateRandomString() {
 
@@ -40,6 +53,7 @@ app.get("/urls/new", (req, res) => {
   res.status(200).render("urls_new", templateVars);
 });
 
+//generates a random alphanumeric string to be set as shortUrl
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   let {longURL} = req.body;
@@ -65,12 +79,42 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/register", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
-
   let templateVars = {
     email: email,
     password: password
-  }
+  };
   res.status(200).render("urls_signup", templateVars);
+  });
+
+
+//Registration Endpoint that handles new users information & inserts inputted info into users database
+app.post("/register", (req, res) => {
+  let userid = generateRandomString();
+  let email = req.body.email;
+  let password = req.body.password;
+
+   usersDatabase[userid] = {
+    id: userid,
+    email: req.body.email,
+    password: req.body.password
+   };
+
+  if (email === "" || password === "") {
+    res.status(400).send('Please Enter Email and/or Password');
+    return;
+  }
+
+    for (let userid in usersDatabase) {
+    let user = usersDatabase[userid];
+    console.log("user.email: " + user.email, "req.body.email: " + req.body.email);
+    if (user.email === req.body.email) {
+      res.status(400).send('User already exists');
+      return;
+      }
+    }
+
+   res.cookie("users", usersDatabase[userid]);
+   res.redirect(301, "/urls");
 })
 
 //
