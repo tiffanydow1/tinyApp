@@ -1,0 +1,71 @@
+<!-- views/urls_signup.ejs -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Registration</title>
+  <link rel="stylesheet" href="/css/styles.css" type="text/css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous"> <!--font awesome icons -->
+  <style>
+    body {
+      padding-top: 35px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="col-sm-6 col-sm-offset-3">
+      <h1><span class="fas fa-sign-in-alt"></span>Signup</h1>
+
+      <!-- LOGIN FORM -->
+      <form action="/register" method="POST">
+        <div class="form-group">
+          <label>Enter Email Here: </label>
+          <input type="email" name="email" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Enter Password Here: </label>
+          <input type="password" name="password" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-warning btn-lg">Signup</button>
+      </form>
+
+      <hr>
+
+      <p>Already have an account? <a href="urls/login">Login</a></p>
+
+      <p>Or go <a href="urls">Home</a>.</p>
+    </div>
+    </div>
+    </body>
+    </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -61,6 +61,19 @@ app.get("/u/:shortURL", (req, res) => {
   //return next();
 });
 
+//Registration page that accepts new users
+app.get("/register", (req, res) => {
+  let email = req.body.email;
+  let password = req.body.password;
+
+  let templateVars = {
+    email: email,
+    password: password
+  }
+  res.status(200).render("urls_signup", templateVars);
+})
+
+//
 app.get("/urls/:id", (req, res) => {
   let {id:shortUrl} = req.params;
   let longUrl = urlDatabase[shortUrl];
@@ -71,6 +84,7 @@ app.get("/urls/:id", (req, res) => {
   res.status(200).render("urls_show", templateVars);
 })
 
+//
 app.post("/urls/:id/delete", (req, res) => {
   let shortUrl = req.params.id;
 
@@ -78,6 +92,7 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect(301, "/urls");
 })
 
+//
 app.post("/urls/:id", (req, res) => {
   let {id:shortUrl} = req.params;
   let {longUrl} = req.body;
