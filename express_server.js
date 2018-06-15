@@ -43,13 +43,13 @@ function generateRandomString() {
 
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase,
-      username: req.cookies["username"]
+      //userid: req.cookie["userid"]
    };
   res.status(200).render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  let templateVars = { username: req.cookies["username"] };
+  let templateVars = { userid: req.cookie["userid"] };
   res.status(200).render("urls_new", templateVars);
 });
 
@@ -65,7 +65,7 @@ app.get("/u/:shortURL", (req, res) => {
   let shortUrl = req.params.id;
   const longURL = urlDatabase[req.params.shortURL];
   let templateVars = {
-    username: req.cookies["username"]
+    userid: req.cookie["userid"]
   }
   if(longURL === undefined) {
     res.status(404).send('Not Found');
@@ -93,29 +93,30 @@ app.post("/register", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
 
-   usersDatabase[userid] = {
-    id: userid,
-    email: req.body.email,
-    password: req.body.password
-   };
-
-  if (email === "" || password === "") {
-    res.status(400).send('Please Enter Email and/or Password');
-    return;
-  }
+   //If user doesn't enter in a value for email or password, send error
+    let user = usersDatabase[userid];
 
     for (let userid in usersDatabase) {
-    let user = usersDatabase[userid];
-    console.log("user.email: " + user.email, "req.body.email: " + req.body.email);
-    if (user.email === req.body.email) {
-      res.status(400).send('User already exists');
-      return;
+    //console.log("user.email: " + user.email, "req.body.email: " + req.body.email);
+    if (usersDatabase.hasOwnProperty(userid)) {
+      if (usersDatabase[userid].email === req.body.email) {
+        res.status(400).send('User already exists!');
       }
+     }
     }
 
-   res.cookie("users", usersDatabase[userid]);
-   res.redirect(301, "/urls");
-})
+    if ((email === "") || (password === "")) {
+    res.status(400).send('Please Enter Email and/or Password');
+  } else {
+        usersDatabase[userid] = {
+        id: userid,
+        email: req.body.email,
+        password: req.body.password
+      }
+      res.cookie("userid", usersDatabase[userid]);
+      res.redirect(301, "/urls");
+     };
+  });
 
 //
 app.get("/urls/:id", (req, res) => {
@@ -123,7 +124,7 @@ app.get("/urls/:id", (req, res) => {
   let longUrl = urlDatabase[shortUrl];
   let templateVars = { shortUrl: shortUrl,
     longUrl: longUrl,
-    username: req.cookies["username"]
+    userid: req.cookie["userid"]
    }
   res.status(200).render("urls_show", templateVars);
 })
@@ -140,26 +141,67 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post("/urls/:id", (req, res) => {
   let {id:shortUrl} = req.params;
   let {longUrl} = req.body;
-  let templateVars = { username: req.cookies["username"] }
-  console.log(req.cookies["username"]);
+  let templateVars = { userid: req.cookie["userid"] }
+  //console.log(req.cookies["username"]);
   urlDatabase[shortUrl] = longUrl;
   res.redirect(301, "/urls");
 });
 
+//LOGIN PAGE
+app.get("/login", (req, res) => {
+
+  let templateVars = {
+    userid: req.body.userid,
+    password: req.body.password
+  };
+  res.render("urls_login", templateVars);
+})
+
 //Save cookies & show username//
 app.post("/login", (req, res) => {
-  let {username} = req.body;
-  res.cookie("username", username);
-  res.redirect(301, "/urls");
-});
+  let {userid} = req.body;
+
+  const flattenObject = (obj) => Object.keys(usersDatabase).reduce((acc, curr) => {
+    return [...acc, usersDatabase[curr]];
+  }, []);
+
+  const findUser = (database,email, password) => {
+    return flattenObject(database).find((user) => user.email === email && user.password === password);
+  }
+  const {email, password} = req.body;
+  const maybeUser = findUser(usersDatabase, email, password);
+
+
+  if (maybeUser !== undefined) {
+    req.cookie.userid = maybeUser.id;
+    res.redirect(301, "/urls");
+  } else {
+    res.status(401).send("You are trying to access a page or resource which is unauthorized.");
+  }
+  });
+
+  // for(let user in usersDatabase) {
+  //   let returnUser = usersDatabase[user];
+  //   console.log(usersDatabase[user]);
+  //   if ((req.body.email === returnUser["email"]) && (req.body.password === returnUser["password"])) {
+  //     req.cookie.userid = returnUser["id"];
+  //     res.redirect(301, "/urls");
+  //     return;
+  //   } else {
+  //     res.status(401).send("You are trying to access a page or resource which is unathourized.");
+  //   }
+  // }
+  //res.cookie("userid", userid);
+  //res.redirect(301, "/urls");
+
 
 //logout
 app.post("/logout", (req, res) => {
-  let {username} = req.body;
+  let {userid} = req.body;
   let templateVars = {
-    username: req.cookies["username"]
+    userid: req.cookie["userid"]
   }
-  res.clearCookie("username", username);
+  res.clearCookie("userid", userid);
   res.redirect(301, "/urls");
 })
 
