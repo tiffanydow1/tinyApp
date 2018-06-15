@@ -20,10 +20,10 @@
     <h1><span class="fas fa-sign-in-alt"></span>Login</h1>
 
     <!-- LOGIN FORM -->
-    <% if (!userid){ %>
+
     <form action="/login" method="POST">
       <div class="form-group">
-        <label>Enter your username: </label>
+        <label>Enter your email: </label>
         <input type="text" name="email" class="form-control" style="width: 300px">
       </div>
       <div class="form-group">
@@ -33,17 +33,12 @@
 
       <button type="submit" class="btn btn-warning btn-lg">Login</button>
     </form>
-    <% } else { %>
-    <h1>Welcome back, <%=userid %></h1>
+
+
     <!-- <button type="submit" formaction="/logout" formmethod="POST">Logout</button> -->
 
-    <form action="/logout" method="POST" style="margin:150px">
-    <input type="submit" value="logout">
-    </form>
-    <%}%>
 
 
-    <hr>
 
     <p>Not A User? <a href="/register">Signup Here</a></p>
     <p>Or go <a href="/urls">Home</a>.</p>

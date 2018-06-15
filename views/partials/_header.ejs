@@ -1,19 +1,30 @@
 <!-- views/partials/header.ejs -->
-
-<html>
+<!DOCTYPE>
+<html lang="en">
 <head>
   <title>Tiny App</title>
   <link rel="stylesheet" href="/styles.css" type="text/css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 </head>
 <body>
-  <p>Login or Register with:</p>
+  <h1>TinyApp</h1>
+  <%if (!user) { %>
+
+      <p>Login or Register with:</p>
 
         <a href="/login" class="btn btn-default"><span class="far fa-user"></span>LOGIN</a>
         <a href="/register" class="btn btn-default"><span class="far fa-user"></span>SIGNUP</a>
+
+        <h2>Welcome to TinyApp!</h2>
+        <p>Need a shortened URL? Let us help you!</p>
+     <% } else { %>
+        <p>Welcome, <%= user.email%>!</p>
+        <form method="POST" action="/logout">
+          <button name="userid" type = "submit">LOGOUT</button>
+        </form>
+      <% } %>
 </body>
 </html>
-
 
 
 

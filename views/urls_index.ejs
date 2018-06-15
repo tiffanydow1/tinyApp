@@ -3,9 +3,12 @@
 <head>
 <% include ./partials/_header.ejs %>
 <link rel="stylesheet" href="/css/styles.css" type="text/css">
+<title>TinyApp HomePage</title>
 </head>
 <body>
-  <table class = "table">
+  <% if(!user) { %>
+ <% } else { %>
+    <table class = "table">
   <thead>
    <tr>
      <th>Short URL</th>
@@ -17,7 +20,7 @@
    <% for ( let shortUrl in urls ) { %>
    <tr>
      <td><%= shortUrl %></td>
-     <td><%= urls[shortUrl] %></td>
+     <td><%= urls[shortUrl].longUrl %></td>
      <td><form method="POST" action="/urls/<%= shortUrl %>/delete">
         <input type="submit" value="Delete">
      </form>
@@ -29,10 +32,13 @@
  <% } %>
  </tbody>
 </table>
+<% } %>
 </body>
 </html>
 </body>
 </html>
+
+
 
 
 
