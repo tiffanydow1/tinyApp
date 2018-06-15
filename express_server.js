@@ -17,12 +17,12 @@ const urlDatabase = { //object keeps track of URLs & shortened form (as values a
 
 const usersDatabase = {
   "userID-1": {
-    id: "tiffanyd",
+    id: "userID-1",
     email: "tiffanyjdow@gmail.com",
     password: "yoloswag"
   },
   "userID-2": {
-    id: "camueljackson",
+    id: "userID-2",
     email: "camueljackson@gmail.com",
     password: "beyoncejay"
   }
@@ -151,7 +151,7 @@ app.post("/urls/:id", (req, res) => {
 app.get("/login", (req, res) => {
 
   let templateVars = {
-    userid: req.body.userid,
+    userid: req.body.email,
     password: req.body.password
   };
   res.render("urls_login", templateVars);
@@ -172,7 +172,7 @@ app.post("/login", (req, res) => {
   const maybeUser = findUser(usersDatabase, email, password);
 
   if (maybeUser !== undefined) {
-    req.cookie.userid = maybeUser.id;
+    res.cookie("userid", maybeUser.id);
     res.redirect(301, "/urls");
   } else {
     res.status(401).send("You are trying to access a page or resource which is unauthorized.");
