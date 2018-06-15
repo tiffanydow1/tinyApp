@@ -171,7 +171,6 @@ app.post("/login", (req, res) => {
   const {email, password} = req.body;
   const maybeUser = findUser(usersDatabase, email, password);
 
-
   if (maybeUser !== undefined) {
     req.cookie.userid = maybeUser.id;
     res.redirect(301, "/urls");
