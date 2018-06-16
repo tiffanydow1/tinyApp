@@ -265,7 +265,6 @@ app.post("/login", (req, res) => {
   const flattenObject = (obj) => Object.keys(usersDatabase).reduce((acc, curr) => {
     return [...acc, usersDatabase[curr]];
   }, []);
-  console.log(flattenObject);
 
   const findUser = (database, email, Password) => {
     return flattenObject(database).find((user) =>
