@@ -6,6 +6,7 @@
   <title>User Login</title>
   <link rel="stylesheet" href="/css/styles.css" type="text/css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous"> <!--pure CSS -->
   <style>
     body {
       padding-top: 35px;
@@ -20,25 +21,15 @@
     <h1><span class="fas fa-sign-in-alt"></span>Login</h1>
 
     <!-- LOGIN FORM -->
-
-    <form action="/login" method="POST">
-      <div class="form-group">
-        <label>Enter your email: </label>
-        <input type="text" name="email" class="form-control" style="width: 300px">
-      </div>
-      <div class="form-group">
-        <label>Enter your password: </label>
-        <input type="password" name="password" class="form-control">
-      </div>
-
-      <button type="submit" class="btn btn-warning btn-lg">Login</button>
-    </form>
-
-
-    <!-- <button type="submit" formaction="/logout" formmethod="POST">Logout</button> -->
-
-
-
+    <form action="/login" method="POST" class="pure-form">
+    <fieldset>
+      <label for="sign-in">Sign in</label>
+            <input type="text" class="pure-input-rounded" name="email" placeholder="Email" />
+            <input class="pure-input-rounded" type="password" name="password" placeholder ="Password" />
+            <button type="submit">SIGN IN</button>
+    </fieldset>
+  </form>
+</div>
 
     <p>Not A User? <a href="/register">Signup Here</a></p>
     <p>Or go <a href="/urls">Home</a>.</p>
@@ -46,9 +37,6 @@
   </div>
   </body>
   </html>
-
-
-
 
 
 

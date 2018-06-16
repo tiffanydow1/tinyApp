@@ -58,18 +58,6 @@ function generateRandomString() {
   return randomString;
 }
 
-//function to return a short URL to a user who is logged in
-// function shortUrlForUser(id) {
-//   var userURL = {};
-
-//   for (var shortURL in urlDatabase) {
-//     if(urlDatabase[shortURL].id === id) {
-//       userURL[shortURL] = urlDatabase[shortURL];
-//     }
-//   }
-//   return userURL;
-// }
-
 //function to find if a userID exists in the database for the purpose of creating new shortUrl.
 function findUser(id) {
   let foundUser;
@@ -118,8 +106,6 @@ app.get("/urls", (req, res) => {
     res.status(401).send('You are trying to access a page that requires user authentication, please try again.');
    }
 });
-
-
 //calls on function to generate random string to be set as shortUrl and redirects to url_index page
 app.post("/urls", (req, res) => {
   let shortUrl = generateRandomString();
@@ -150,7 +136,7 @@ app.get("/urls/new", (req, res) => {
      }
 });
 
-//
+//Allows user to view their indivuidual url page
 app.get("/u/:shortURL", (req, res) => {
   let shortUrl = req.params.id;
   const longURL = urlDatabase[req.params.shortURL];
@@ -164,7 +150,6 @@ app.get("/u/:shortURL", (req, res) => {
   } else if (urlDatabase[req.params.shortUrl]) {
     res.redirect(301, longUrl.longUrl);
   }
-  //return next();
 });
 
 //Registration page that accepts new users
@@ -195,7 +180,6 @@ app.post("/register", (req, res) => {
   };
 
    //If user doesn't enter in a value for email or password, send error
-
 
     for (let userid in usersDatabase) {
     //console.log("user.email: " + user.email, "req.body.email: " + req.body.email);
