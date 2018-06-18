@@ -8,11 +8,9 @@
 
  <% } else { %>
 
-
-
     <ul>
-      <li><%= shortUrl %></li>
-      <li><%= longUrl %></li>
+      <li>Short Version: <%= shortUrl %></li>
+      <li>Long Version: <%= longUrl %></li>
 
       <li><form method="POST" action="/urls/<%=shortUrl%>">
           <input type="submit" value="Update">

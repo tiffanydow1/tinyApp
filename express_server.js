@@ -137,18 +137,17 @@ app.get("/urls/new", (req, res) => {
 });
 
 //Allows user to view their indivuidual url page
-app.get("/u/:shortURL", (req, res) => {
-  let shortUrl = req.params.id;
-  const longURL = urlDatabase[req.params.shortURL];
+app.get("/u/:shortUrl", (req, res) => {
+  let longUrl = urlDatabase[req.params.shortUrl];
   let cookieID = req.session.userid;
   let templateVars = {
     user: usersDatabase[cookieID],
     urls: urlsForUser(cookieID)
   };
   if(!urlDatabase[req.params.shortUrl]) {
-    res.status(401).render("error", templateVars);
+    res.status(401).render("Error 401", templateVars);
   } else if (urlDatabase[req.params.shortUrl]) {
-    res.redirect(301, longUrl.longUrl);
+    res.redirect(longUrl.longUrl);
   }
 });
 
@@ -235,13 +234,11 @@ app.post("/urls/:id/delete", (req, res) => {
 
 //
 app.post("/urls/:id", (req, res) => {
-  let {id:shortUrl} = req.params;
-  let {longUrl} = req.body;
-  urlDatabase[shortUrl] = {
-    longUrl: longUrl,
-    id: req.session.userid
+  urlDatabase[req.params.id].longUrl = req.body.longUrl;
+  if (urlDatabase[req.params.id].longUrl !== /^https?:\/\//) {
+    urlDatabase[req.params.id].longUrl = `https://${urlDatabase[req.params.id].longUrl}`;
   }
-  res.redirect(301, "/urls");
+  res.redirect("/urls");
 });
 
 //LOGIN PAGE
