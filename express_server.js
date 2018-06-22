@@ -15,7 +15,7 @@ app.use(express.static("./views/css"));
 const cookieSession = require('cookie-session');
 app.use(cookieSession( {
   name: 'session',
-  keys: ['key1', 'key2'],
+  keys: ['key1']
 }));
 
 
@@ -59,14 +59,27 @@ function generateRandomString() {
 }
 
 //function to find if a userID exists in the database for the purpose of creating new shortUrl.
-function findUser(id) {
-  let foundUser;
+function findUser(email, password) {
+  let result = "";
+
   for (let userid in usersDatabase) {
-    if (usersDatabase[userid].id === id) {
-      foundUser = usersDatabase[userid];
+    if (usersDatabase[userid].email === email) {
+      if (bcrypt.compareSync(password, usersDatabase[userid].password)) {
+        result = usersDatabase[userid];
+        return result;
+      }
+    }
+  return result;
+ }
+}
+
+//Function that loops for the database of users to verify the user at login via user id
+function verifyUser(email) {
+  for (user in usersDatabase) {
+    if (email === usersDatabase[user].email) {
+      return usersDatabase[user];
     }
   }
-  return foundUser;
 }
 
 //function that allows logged in users to only view their own short URLs
@@ -95,15 +108,16 @@ app.get("/", (req,res) => {
 
 
 app.get("/urls", (req, res) => {
+  console.log("went to /urls");
   let cookieID = req.session.userid;
   let templateVars = { urls: urlsForUser(cookieID),
       user: usersDatabase[cookieID]
    };
 
-  if (usersDatabase[cookieID]) {
+  if (cookieID) {
     res.status(200).render("urls_index", templateVars);
    } else {
-    res.status(401).send('You are trying to access a page that requires user authentication, please try again.');
+    res.redirect('/login');
    }
 });
 //calls on function to generate random string to be set as shortUrl and redirects to url_index page
@@ -167,19 +181,12 @@ app.get("/register", (req, res) => {
 
 //Registration Endpoint that handles new users information & inserts inputted info into users database
 app.post("/register", (req, res) => {
-  let userid = generateRandomString();
-  let email = req.body.email;
-  let password = req.body.password;
-  let encodedPassword = bcrypt.hashSync('password', 10);
-  let cookieID = req.session.userid;
-
-  let templateVars = {
-    user: usersDatabase[cookieID],
-    urls: urlsForUser(cookieID)
-  };
-
+  const userid = generateRandomString();
+  const email = req.body.email;
+  const password = req.body.password;
+  console.log(req.body);
+  const encodedPassword = bcrypt.hashSync(password, 10);
    //If user doesn't enter in a value for email or password, send error
-
     for (let userid in usersDatabase) {
     //console.log("user.email: " + user.email, "req.body.email: " + req.body.email);
     if (usersDatabase.hasOwnProperty(userid)) {
@@ -188,19 +195,18 @@ app.post("/register", (req, res) => {
       }
      }
     }
-
     if ((email === "") || (password === "")) {
     res.status(400).send('Please Enter Email and/or Password');
-  } else {
-        usersDatabase[userid] = {
+    } else {
+      usersDatabase[userid] = {
         id: userid,
         email: email,
         password: encodedPassword
       };
-
       req.session.userid = userid;
       res.redirect(301, "/urls");
      }
+     console.log(usersDatabase);
   });
 
 //Request to update a long url and rediect back to URL page.
@@ -244,40 +250,58 @@ app.post("/urls/:id", (req, res) => {
 //LOGIN PAGE
 app.get("/login", (req, res) => {
 
-  let cookieID = req.session.userid;
-  let templateVars = {
-    email: req.body.email,
-    password: bcrypt.hashSync('req.body.password', 10),
-    user: (usersDatabase[cookieID])
-  };
-  res.render("urls_login", templateVars);
+const currentUser = req.session.userid;
+
+  const templateVars = {
+    user: currentUser
+  }
+  if (currentUser) {
+    res.redirect('/urls', templateVars);
+  } else {
+    res.render('urls_login', templateVars);
+  }
 });
 
 //Login page - check to see if a user account already exists, if so, login. If no account, redirect to error page.
-app.post("/login", (req, res) => {
-  let {email, password} = req.body;
+  app.post("/login", (req, res) => {
 
+  let email = req.body.email;
+  let password = req.body.password;
+  let verifiedUser = verifyUser(email);
 
-
-  const flattenObject = (obj) => Object.keys(usersDatabase).reduce((acc, curr) => {
-    return [...acc, usersDatabase[curr]];
-  }, []);
-
-  const findUser = (database, email, Password) => {
-    return flattenObject(database).find((user) =>
-      ((user.email === email) && (bcrypt.compareSync(password, user.password))));
-  }
-  const maybeUser = findUser(usersDatabase, email, password);
-
-  if (maybeUser) {
-    req.session.userid = maybeUser['id'];
-
-    res.redirect(301, "/urls");
-  } else {
-    res.status(401).send("You are trying to access a page or resource which is unauthorized.");
-    return;
+  if (verifiedUser) {
+    console.log('email: ' + email);
+    console.log('verifiedUser.email: ' + verifiedUser.email);
+     if ((verifiedUser.email === email) && (bcrypt.compareSync(password, verifiedUser.password))) {
+      res.cookie("verifiedUser", verifiedUser);
+      req.session.userid = verifiedUser.id
+      res.redirect('/urls');
+     } else {
+      res.status(401).send('You are trying to access a page or resource which is unauthorized.');
+     }
   }
   });
+
+  //  const flattenObject = (obj) => Object.keys(usersDatabase).reduce((acc, curr) => {
+  //   return [...acc, usersDatabase[curr]];
+  // }, []);
+
+  // const findUser = (database, email, password) => {
+
+  //   return flattenObject(database).find((user) =>
+  //     ((user.email === userEmail) && (bcrypt.compareSync(userPassword, user.password))));
+  // }
+  // const maybeUser = findUser(usersDatabase, userEmail, userPassword);
+
+  // if (maybeUser) {
+  //   req.session.userid = maybeUser['id'];
+
+  //   res.redirect(301, "/urls");
+  // } else {
+  //   res.status(401).send("You are trying to access a page or resource which is unauthorized.");
+  //   return;
+
+
 
 
 //logout - after logout button is clicked, cookies are cleared and page redirects to login
