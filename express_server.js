@@ -137,17 +137,36 @@ app.post("/urls", (req, res) => {
 
 //show form to input a new url
 app.get("/urls/new", (req, res) => {
-  let cookieID = req.session.userid;
-  let templateVars = {
-    user: usersDatabase[cookieID]
-     };
 
-     let user = findUser(cookieID);
-     if (user) {
-      res.status(200).render("urls_new", templateVars);
-     } else {
-      res.redirect(301, "/login");
-     }
+  let templateVars = {
+    user: ''
+  }
+  //If person on site is not a user, redirect to login
+  let user = req.session.userid;
+  let userid = req.session.userid.id;
+  let urls = urlsForUser(userid);
+  if (!user) {
+    res.render('login', templateVars);
+  } else {
+    templateVars = {
+      user: user,
+      userid: userid,
+      urls: urls
+    }
+    res.render('urls/new', templateVars);
+  }
+
+  // let cookieID = req.session.userid;
+  // let templateVars = {
+  //   user: usersDatabase[cookieID]
+  //    };
+
+  //    let user = findUser(cookieID);
+  //    if (user) {
+  //     res.status(200).render("urls_new", templateVars);
+  //    } else {
+  //     res.redirect(301, "/login");
+  //    }
 });
 
 //Allows user to view their indivuidual url page
