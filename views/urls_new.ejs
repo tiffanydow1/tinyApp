@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <% include ./partials/_header.ejs %>
+ <% include ./partials/_header.ejs %>
 </head>
 <body style="font-size:20px; padding: 50px;">
-  <% if (!user) { %>
+  <% if (!user.id) { %>
+  <a href="/login/">You must login first to shorten an URL</a>
 
  <% } else { %>
 
