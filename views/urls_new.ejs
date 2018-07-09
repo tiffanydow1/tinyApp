@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <% include ./partials/_header.ejs %>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body style="font-size:20px; padding: 50px;">
-  <% if (!user.id) { %>
-  <a href="/login/">You must login first to shorten an URL</a>
-
- <% } else { %>
 
   <form action="/urls" method="POST" style="margin:150px;">
     <label for="longUrl">Enter a URL:</label>
@@ -15,7 +12,7 @@
     <input type="submit" value="Submit">
   </form>
   <p>Go back <a href="/urls">Home</a>.</p>
- <% } %>
+
 </body>
 </html>
 

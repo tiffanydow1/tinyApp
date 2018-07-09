@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-<% include ./partials/_header.ejs %>
-<link rel="stylesheet" href="/css/styles.css" type="text/css">
-<title>TinyApp HomePage</title>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1' />
+  <link rel="stylesheet" href="/css/styles.css" type="text/css">
+  <title>TinyApp Homepage</title>
+
+<%- include('partials/_header') %>
 </head>
+
 <body>
   <% if(!user) { %>
     <a href="login"> Please log in to see your URLs</a>
@@ -33,7 +37,7 @@
  <% } %>
  </tbody>
 </table>
-<p>Want to add a new URL? Click <a href="/urls/new">here</a>.</p/>
+<p>Want to add a new URL? Click <a href="urls/new">here</a>.</p/>
  <% } %>
 </body>
 </html>

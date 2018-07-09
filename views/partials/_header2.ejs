@@ -1,0 +1,73 @@
+<link type='text/css' rel='stylesheet' href='/stylesheets/style.css'>
+<header id='title'>
+
+ <!-- This is a navbar I just copy pasted from bootstrap -->
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        TinyApp
+      </a>
+    </div>
+
+
+
+    <!-- If the user is logged in, show 'Hello, user', and a logout button if they click the dropdown' -->
+    <% if (username !== undefined) { %>
+    <!-- This is where you add a new URL -->
+    <form class="navbar-form navbar-left" action="/urls" method="POST">
+      <div class="form-group">
+        <label for="longURL"></label>
+          <input type="text" name="longURL" class="form-control" placeholder="Add a new url:">
+      </div>
+    </form>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              Hello, <%= username.email %>
+            <span class="caret"></span></a>
+          <!-- This is the logout button -->
+          <ul class="dropdown-menu">
+            <form class="navbar-form navbar-left" action="/logout" method='POST' style='width: 100%'>
+              <div class="form-group" style='width: 100%'>
+                <input value='Logout' class="form-control" type='submit' style='width: 100%'>
+              </div>
+            </form>
+          </ul>
+          </li>
+      </ul>
+    </div>
+        <!-- If the user is not logged in, show 'Login' in a dropdown menu, with a form and a register button -->
+        <% } else { %>
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            Login
+          <span class="caret"></span></a>
+        <!-- This is where you log or redirect-->
+          <ul class="dropdown-menu">
+            <div class="form-group">
+              <form class="navbar-form navbar-left" action="/login" method='POST'>
+                <!-- email -->
+                <input type="text" class="form-control" placeholder="username" name='email'>
+                <!-- password -->
+                <input type="password" class="form-control" placeholder="password" name='password'>
+                <!-- login button -->
+                <input value="Login" class="form-control" type="submit" name="Submit">
+                <!-- register button -->
+                <a href="/register"><input type="button" class="form-control" value="Register"></a>
+              </form>
+            </div>
+          </ul>
+        <% } %>
+
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</header>

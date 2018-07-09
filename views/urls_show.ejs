@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<% include ./partials/_header.ejs %>
+
 </head>
 <body>
-  <%if (!user) { %>
-
- <% } else { %>
 
     <ul>
       <li>Short Version: <%= shortUrl %></li>
@@ -14,12 +11,11 @@
 
       <li><form method="POST" action="/urls/<%=shortUrl%>">
           <input type="submit" value="Update">
-          <input type="text" name="longUrl" placeholder="<%= longUrl %>" style="width: 300px">
+          <input type="text" name="longUrl" placeholder="<%=longUrl %>" style="width: 300px">
           </form></li>
       <p>Go back<a href="/urls"> Home</a>.</p>
 
     </ul>
-    <% } %>
 </body>
 </html>
 
