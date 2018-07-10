@@ -1,31 +1,71 @@
 <!-- views/partials/header.ejs -->
-<!DOCTYPE>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Tiny App</title>
-  <link rel="stylesheet" href="/styles.css" type="text/css">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
-</head>
-<body>
-  <h1>TinyApp</h1>
+
   <%if (!user) { %>
+  <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Tiny URL</a>
+        </div>
+        <div id="myNavbar" class="navbar-collapse collapse">
+          <form action="/login" method="POST" class="navbar-form navbar-right">
+            <div class="form-group">
+              <input type="text" placeholder="Email" class="form-control">
+            </div>
+            <div class="form-group">
+              <input type="password" placeholder="Password" class="form-control">
+            </div>
+            <button type="submit" class="btn mr-2 btn-light">LOGIN</button>
+          </form>
 
-      <p>Login or Register with:</p>
+          <form action="/register" method="POST" class="navbar-form navbar-left">
+            <div class="form-group">
+              <input type="text" placeholder="Email" class="form-control">
+            </div>
+            <div class="form-group">
+              <input type="password" placeholder="Password" class="form-control">
+            </div>
+            <button type="submit" class="btn mr-2 btn-light">SIGN UP</button>
+          </form>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
 
-        <a href="/login" class="btn btn-default"><span class="far fa-user"></span>LOGIN</a>
-        <a href="/register" class="btn btn-default"><span class="far fa-user"></span>SIGNUP</a>
+    <h2>Welcome to TinyApp!</h2>
+    <p>Need a shortened URL? Let us help you!</p>
 
-        <h2>Welcome to TinyApp!</h2>
-        <p>Need a shortened URL? Let us help you!</p>
      <% } else { %>
-        <p>Welcome, <%= user.email %>!</p>
-        <form method="POST" action="/logout">
-          <button name="userid" type = "submit">LOGOUT</button>
-        </form>
+
+      <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Tiny URL</a>
+        </div>
+        <div id="myNavbar" class="navbar-collapse collapse">
+          <form action="/logout" method="POST" class="navbar-form navbar-right">
+            <button name="userid" type="submit" class="btn mr-2 btn-light">LOGOUT</button>
+          </form>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+
+        <h1>Welcome, <%= user.email %>!</h1>
+
       <% } %>
-</body>
-</html>
+
+
+
 
 
 

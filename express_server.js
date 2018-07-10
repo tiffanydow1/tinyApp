@@ -17,10 +17,11 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000
 }));
 
+app.use(express.static("./views"));
+
 //Allows for the encryption of sensitive user information
 const bcrypt = require('bcryptjs');
 
-app.use(express.static("views/css"));
 
 // ******************************************************* //
 
@@ -227,7 +228,7 @@ app.post('/register', (req, res) => {
     if (email === "" || password === "") {
       res.status(401).send('Please fill in your email and/or password to continue');
     } if (email === usersDatabase[user].email) {
-      res.status(401).send('User already exists, please try again.');
+      res.status(401).send('User already exists, please try registering again.');
     } else {
       usersDatabase[userid] = {
         id: userid,
