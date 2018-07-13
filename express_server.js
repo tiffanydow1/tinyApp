@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const PORT = 8080;
+const flash = require('express-flash');
 
 app.set('view engine', 'ejs');
 
@@ -18,14 +19,14 @@ app.use(cookieSession({
 }));
 
 app.use(express.static("./views"));
+app.use(flash());
+
 
 //Allows for the encryption of sensitive user information
 const bcrypt = require('bcryptjs');
 
 
 // ******************************************************* //
-
-//DATABASES WITH GLOBAL REACH
 
  //Database containing URLS - object keeps track of long URLS & their shortened form (as keys & values)
 const urlDatabase = {
@@ -56,7 +57,7 @@ const usersDatabase = {
 
 // ****************************************************** //
 
-//FUNCTIONS WITH GLOBAL REACH
+//FUNCTIONS
 
 //Generates a unique shorturl by producing 6 random alphanumeric characters
 const generateRandomString = () => {
@@ -71,7 +72,6 @@ const generateRandomString = () => {
   return randomString;
 };
 
-//function to find if a user id exists in the database for the purpose of creating a new shortUrl.
 function findUser(id) {
   let foundUser;
   for (let userid in usersDatabase) {
@@ -93,21 +93,6 @@ const verifyUser = (email, password) => {
   }
   return false;
 };
-
-//Checks to see if the current user is an existing user in the database
-// const userExists = (currentUser) => {
-
-//  return currentUser in usersDatabase;
-// };
-
-//Loops through database of users to verify the user
-// const verifyUser = (email, password) => {
-//   for (user in usersDatabase) {
-//     if (usersDatabase[user].email === email && bcrypt.compareSync(password, usersDatabase[user].password)) {
-//       return true;
-//     }
-//   } return false;
-// };
 
 //function that allows logged in users to view only their own short URLs
 const urlsForUser = (id) => {
@@ -158,26 +143,27 @@ app.get('/urls', (req, res) => {
   if (usersDatabase[cookieID]) {
     res.status(200).render('urls_index', templateVars);
   } else {
-    res.status(401).send('You are trying to access a page that requires user authentication, please try again.');
+     req.flash('error', 'You are trying to access a page that requires user authentication, please try again.');
+     res.status(301).redirect('/login');
   }
 });
 
 //Takes users to a page where they can generate a new shorturl
 app.get('/urls/new', (req, res) => {
 
-  let cookieID = req.session.userid;
+    let cookieID = req.session.userid;
 
-  let templateVars = {
-    user: usersDatabase[cookieID]
-  };
+    let templateVars = {
+      user: usersDatabase[cookieID]
+    };
 
-  let user = findUser(cookieID);
-  if (user) {
-    res.status(200).render('urls_new', templateVars);
-  } else {
-    res.redirect(301, '/login');
-  }
- });
+    let user = findUser(cookieID);
+      if (user) {
+        res.status(200).render('urls_new', templateVars);
+      } else {
+        res.redirect(301, '/login');
+      }
+  });
 
 //Uses the user-generated shorturl to redirect to the longurl
 app.get('/u/:shortUrl', (req, res) => {
@@ -186,21 +172,21 @@ app.get('/u/:shortUrl', (req, res) => {
      let longUrl = urlDatabase[req.params.shortUrl].longUrl;
      let redirect;
 
-     if (!longUrl.includes('http')) {
-      redirect = 'http://' + longUrl;
-     } else {
-      redirect = longUrl;
-     }
-     res.status(301).redirect(redirect);
+      if (!longUrl.includes('http')) {
+        redirect = 'http://' + longUrl;
+      } else {
+        redirect = longUrl;
+      }
+        res.status(301).redirect(redirect);
 
 });
 
 //Users custom URL page
 app.get("/urls/:id", (req, res) => {
 
-  let cookieID = req.session.userid;
+    let cookieID = req.session.userid;
 
-  if(urlDatabase[req.params.id]) {
+      if(urlDatabase[req.params.id]) {
 
     let templateVars = {
       shortUrl: req.params.id,
@@ -208,8 +194,8 @@ app.get("/urls/:id", (req, res) => {
       user: usersDatabase[cookieID],
       urls: urlsForUser(cookieID)
     };
-    res.status(200).render('urls_show', templateVars);
-  }
+      res.status(200).render('urls_show', templateVars);
+    }
 });
 
 // *********************************************************** //
@@ -226,9 +212,11 @@ app.post('/register', (req, res) => {
   for (let user in usersDatabase) {
 
     if (email === "" || password === "") {
-      res.status(401).send('Please fill in your email and/or password to continue');
+      req.flash('error', 'Please fill in your email and/or password to continue')
+      res.status(301).redirect('/login');
     } if (email === usersDatabase[user].email) {
-      res.status(401).send('User already exists, please try registering again.');
+      req.flash('error', 'User already exists, please try registering again');
+      res.status(301).redirect('/login');
     } else {
       usersDatabase[userid] = {
         id: userid,
@@ -243,21 +231,23 @@ app.post('/register', (req, res) => {
 
  });
 
+
 //Login page - check to see if a user account already exists, if so, login. If no account, redirect to error page.
 app.post('/login', (req, res) => {
 
-  let email = req.body.email;
-  let password = req.body.password;
-  let verifiedUser = verifyUser(email, password);
+    let email = req.body.email;
+    let password = req.body.password;
+    let verifiedUser = verifyUser(email, password);
 
-    if (verifiedUser) {
+      if (verifiedUser) {
 
-      req.session.userid = verifiedUser;
-      res.status(301).redirect('/urls');
-    } else {
-      res.status(401).send('Error: User and Password do not match. Please try again.')
-    }
-});
+        req.session.userid = verifiedUser;
+        res.status(301).redirect('/urls');
+      } else {
+        req.flash('error', 'Username and Password do not match. Please try again.')
+        res.status(301).redirect('/login')
+      }
+  });
 
 //logout - after logout button is clicked, cookies are cleared and page redirects to index page
 app.post('/logout', (req, res) => {
@@ -269,18 +259,18 @@ app.post('/logout', (req, res) => {
 //Allows users to create urls
 app.post('/urls', (req, res) => {
 
-let shortUrl = generateRandomString();
-let longUrl = req.body.longUrl;
+  let shortUrl = generateRandomString();
+  let longUrl = req.body.longUrl;
 
-const urlObject = {
-  longUrl: longUrl,
-  id: req.session.userid
-};
+  const urlObject = {
+    longUrl: longUrl,
+    id: req.session.userid
+  };
 
- urlDatabase[shortUrl] = urlObject;
- res.redirect(301, '/urls');
+    urlDatabase[shortUrl] = urlObject;
+    res.redirect(301, '/urls');
 
-});
+  });
 
 //Functionality that allows users to view their shorturl information
 app.post('/urls/:id', (req, res) => {
@@ -288,12 +278,12 @@ app.post('/urls/:id', (req, res) => {
   let shortUrl = req.params.id;
   let longUrl = req.body.longUrl;
 
-  urlDatabase[shortUrl] = {
-    longUrl: longUrl,
-    id: req.session.userid
-  }
+    urlDatabase[shortUrl] = {
+      longUrl: longUrl,
+      id: req.session.userid
+    }
 
-    res.status(301).redirect('/urls')
+      res.status(301).redirect('/urls')
 
 });
 
@@ -301,19 +291,18 @@ app.post('/urls/:id', (req, res) => {
 //Functionality that allows users to delete an existing URL only if they are signed in.
 app.post('/urls/:id/delete', (req, res) => {
 
-  let cookieID = req.session.userid;
-  let shortUrl = req.params.id;
+    let cookieID = req.session.userid;
+    let shortUrl = req.params.id;
 
-  if (urlDatabase[shortUrl].id === cookieID) {
-    delete urlDatabase[shortUrl];
-    res.status(301).redirect('/urls');
-  } else {
-    res.status(400).send('Error: You do not have permission to delete this URL');
-    return;
-   }
-});
+    if (urlDatabase[shortUrl].id === cookieID) {
+      delete urlDatabase[shortUrl];
+      res.status(301).redirect('/urls');
+    } else {
+      res.status(400).send('Error: You do not have permission to delete this URL');
+      return;
+    }
+  });
 
-//This is where the magic beings
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
